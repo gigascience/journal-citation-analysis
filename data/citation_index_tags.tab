@@ -1,0 +1,44 @@
+FN	File Name
+VR	Version Number
+AU	Authors
+CA	Group Authors
+ED	Editors
+TI	Document Title
+SO	Source Title
+LA	Language
+DT	Document Type
+DE	Author Keywords
+AB	Abstract
+C1	Author Addresses
+EM	E-mail Address
+RI	ResearcherID Number
+OI	ORCID Identifier (Open Researcher and Contributor ID)
+FU	Funding Information
+FX	Funding Text
+CR	Cited References
+NR	Cited Reference Count
+Z9	Total Times Cited Count (Web of Science Core Collection, BIOSIS Citation Index, Chinese Science Citation Database, Data Citation Index, Russian Science Citation Index, SciELO Citation Index)
+U1	Usage Count (Last 180 Days)
+U2	Usage Count (Since 2013)
+PY	Year Published
+DI	Digital Object Identifier (DOI)
+WC	Web of Science Categories
+SU	Research Area
+UT	Accession Number
+UR	Source URL
+VN	Version
+DY	Data Type
+TA	Taxonomic Data
+GS	Geospatial
+OD	Method
+GN	Gene Name
+DM	Demography
+NP	Named Person
+GT	Time
+MI	Miscellanous
+OA	Open Access Indicator
+HP	ESI Hot Paper. Note that this field is valued only for ESI subscribers.
+HC	ESI Highly Cited Paper. Note that this field is valued only for ESI subscribers.
+DA	Date this report was generated.
+ER	End of Record
+EF	End of File
