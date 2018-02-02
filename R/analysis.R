@@ -6,6 +6,8 @@
 library(plotly)
 library(stargazer)
 
+library(dplyr)  # For color???
+
 # Read in GigaScience tab delimited file
 gigatags <- read.table("data/wos/savedrecs_gigascience_289all.txt", sep="\t", nrows=1, stringsAsFactors=FALSE)
 # There are 68 cols
@@ -79,6 +81,100 @@ layout(title = "Number of papers published in GigaScience",
 xaxis = list(title = "Year"),
 yaxis = list(title = 'No. papers'),
 barmode = 'stack')
+
+####
+
+# Get total article types in GigaScience
+reviews <- giga[which(giga$DT=="Review"), ]
+datanotes <- giga[which(giga$DT=="Article; Data Paper"), ]
+articles <- giga[which(giga$DT=="Article"), ]
+commentaries <- giga[which(giga$DT=="Editorial Material"), ]
+
+# Display
+x <- c('Commentaries', 'Articles', 'Data Notes', 'Reviews')
+y <- c(nrow(commentaries), nrow(articles), nrow(datanotes), nrow(reviews))
+text <- c('', '', '')
+data <- data.frame(x, y, text)
+
+p <- plot_ly(data, x = ~x, y = ~y, type = 'bar',
+text = y, textposition = 'auto',
+marker = list(color = 'rgb(158,202,225)',
+line = list(color = 'rgb(8,48,107)', width = 1.5))) %>%
+layout(title = "Number of article types published in GigaScience",
+xaxis = list(title = ""),
+yaxis = list(title = ""))
+
+####
+
+# Get article types per year in GigaScience
+articles2012 <- giga[which(giga$DT=="Article" & giga$PY=="2012"), ]
+articles2013 <- giga[which(giga$DT=="Article" & giga$PY=="2013"), ]
+articles2014 <- giga[which(giga$DT=="Article" & giga$PY=="2014"), ]
+articles2015 <- giga[which(giga$DT=="Article" & giga$PY=="2015"), ]
+articles2016 <- giga[which(giga$DT=="Article" & giga$PY=="2016"), ]
+articles2017 <- giga[which(giga$DT=="Article" & giga$PY=="2017"), ]
+articles <- c(nrow(articles2012), nrow(articles2013), nrow(articles2014), nrow(articles2015), nrow(articles2016), nrow(articles2017))
+
+commentaries2012 <- giga[which(giga$DT=="Editorial Material" & giga$PY=="2012"), ]
+commentaries2013 <- giga[which(giga$DT=="Editorial Material" & giga$PY=="2013"), ]
+commentaries2014 <- giga[which(giga$DT=="Editorial Material" & giga$PY=="2014"), ]
+commentaries2015 <- giga[which(giga$DT=="Editorial Material" & giga$PY=="2015"), ]
+commentaries2016 <- giga[which(giga$DT=="Editorial Material" & giga$PY=="2016"), ]
+commentaries2017 <- giga[which(giga$DT=="Editorial Material" & giga$PY=="2017"), ]
+commentaries <- c(nrow(commentaries2012), nrow(commentaries2013), nrow(commentaries2014), nrow(commentaries2015), nrow(commentaries2016), nrow(commentaries2017))
+
+datanotes2012 <- giga[which(giga$DT=="Article; Data Paper" & giga$PY=="2012"), ]
+datanotes2013 <- giga[which(giga$DT=="Article; Data Paper" & giga$PY=="2013"), ]
+datanotes2014 <- giga[which(giga$DT=="Article; Data Paper" & giga$PY=="2014"), ]
+datanotes2015 <- giga[which(giga$DT=="Article; Data Paper" & giga$PY=="2015"), ]
+datanotes2016 <- giga[which(giga$DT=="Article; Data Paper" & giga$PY=="2016"), ]
+datanotes2017 <- giga[which(giga$DT=="Article; Data Paper" & giga$PY=="2017"), ]
+datanotes <- c(nrow(datanotes2012), nrow(datanotes2013), nrow(datanotes2014), nrow(datanotes2015), nrow(datanotes2016), nrow(datanotes2017))
+
+reviews2012 <- giga[which(giga$DT=="Review" & giga$PY=="2012"), ]
+reviews2013 <- giga[which(giga$DT=="Review" & giga$PY=="2013"), ]
+reviews2014 <- giga[which(giga$DT=="Review" & giga$PY=="2014"), ]
+reviews2015 <- giga[which(giga$DT=="Review" & giga$PY=="2015"), ]
+reviews2016 <- giga[which(giga$DT=="Review" & giga$PY=="2016"), ]
+reviews2017 <- giga[which(giga$DT=="Review" & giga$PY=="2017"), ]
+reviews <- c(nrow(reviews2012), nrow(reviews2013), nrow(reviews2014), nrow(reviews2015), nrow(reviews2016), nrow(reviews2017))
+
+
+# Display
+x <- c('2012', '2013', '2014', '2015', '2016', '2017')
+y1 <- articles
+y2 <- commentaries
+y3 <- datanotes
+y4 <- reviews
+# text <- c('', '', '')
+data <- data.frame(x, y1, y2, y3, y4)
+
+p <- data %>%
+plot_ly() %>%
+add_trace(x = ~x, y = ~y1, type = 'bar',
+text = y1, textposition = 'auto',
+marker = list(color = 'rgb(114,147,203)',
+line = list(color = 'rgb(114,147,203)', width = 1.5)),
+name = 'Articles') %>%
+add_trace(x = ~x, y = ~y2, type = 'bar',
+text = y2, textposition = 'auto',
+marker = list(color = 'rgb(225,151,76)',
+line = list(color = 'rgb(225,151,76)', width = 1.5)),
+name = 'Commentaries') %>%
+add_trace(x = ~x, y = ~y3, type = 'bar',
+text = y3, textposition = 'auto',
+marker = list(color = 'rgb(132,186,91)',
+line = list(color = 'rgb(132,186,91)', width = 1.5)),
+name = 'Data Notes') %>%
+add_trace(x = ~x, y = ~y4, type = 'bar',
+text = y4, textposition = 'auto',
+marker = list(color = 'rgb(211,94,96)',
+line = list(color = 'rgb(211,94,96)', width = 1.5)),
+name = 'Reviews') %>%
+layout(title = "Number of articles types per year",
+barmode = 'group',
+xaxis = list(title = "Year"),
+yaxis = list(title = "Number of articles"))
 
 ####
 
