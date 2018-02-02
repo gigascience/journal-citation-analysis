@@ -171,7 +171,7 @@ text = y4, textposition = 'auto',
 marker = list(color = 'rgb(211,94,96)',
 line = list(color = 'rgb(211,94,96)', width = 1.5)),
 name = 'Reviews') %>%
-layout(title = "Number of articles types per year",
+layout(title = "Types of articles published per year in GigaScience",
 barmode = 'group',
 xaxis = list(title = "Year"),
 yaxis = list(title = "Number of articles"))
