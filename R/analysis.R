@@ -75,7 +75,7 @@ name = 'BGI papers') %>%
 add_trace(y = ~num_not_BGI_pub_per_year,
 text = num_pub_per_year, textposition = 'auto',
 name = 'Non-BGI papers') %>%
-layout(title = "Number of publications with BGI in author list per year in GigaScience",
+layout(title = "Number of papers published in GigaScience",
 xaxis = list(title = "Year"),
 yaxis = list(title = 'No. papers'),
 barmode = 'stack')
