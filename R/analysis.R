@@ -98,9 +98,9 @@ data <- data.frame(x, y, text)
 
 p <- plot_ly(data, x = ~x, y = ~y, type = 'bar',
 text = y, textposition = 'auto',
-marker = list(color = 'rgb(158,202,225)',
-line = list(color = 'rgb(8,48,107)', width = 1.5))) %>%
-layout(title = "Number of article types published in GigaScience",
+marker = list(color = 'rgb(114,147,203)',
+line = list(color = 'rgb(114,147,203)', width = 1.5))) %>%
+layout(title = "Number of types of articles published in GigaScience",
 xaxis = list(title = ""),
 yaxis = list(title = ""))
 
@@ -210,3 +210,38 @@ colnames(top10_mostcited) <- c("Title", "First Author", "Publication Year", "Tot
 
 # Display
 stargazer(top10_mostcited, type = "html", summary = FALSE, rownames = FALSE)
+
+####
+
+# Citation statistics for BGI papers published in GigaScience
+
+# Get DOIs for BGI papers
+giga <- read.csv("data/wos/savedrecs_gigascience_289all.csv", sep=",", stringsAsFactors=FALSE)
+# Remove Correction articles
+giga <- giga[!grepl("Correction", giga$DT),]
+# Get all BGI papers from GigaScience using "BGI" in author addresses
+giga_bgi_idx <- grep("BGI", giga$C1, ignore.case = TRUE)
+# Select these BGI rows from giga data
+giga_bgi_papers <- subset(giga[giga_bgi_idx,],)
+
+bgi_dois <- giga_bgi_papers$DI
+length(bgi_dois)
+# Remove values which are empty strings
+bgi_dois <- bgi_dois[-which(bgi_dois == "")]
+length(bgi_dois)
+
+# Read in citation data
+gigac <- read.table("data/wos/savedrecs_gigascience_289all_citation_report.txt", sep=",", skip=3, stringsAsFactors=FALSE)
+# Tidy up column names
+colnames(gigac) <- gigac[1, ]
+gigac <- gigac[-c(1),]
+
+# Get BGI paper citations using bgi_dois
+bgi_paper_citations <- gigac[gigac$DOI %in% bgi_dois,]
+bgi_paper_citations <- subset(bgi_paper_citations, select=c("Title", "Authors", "Publication Year", "Total Citations", "Average per Year"))
+# Shorten authors to first author
+first_authors <- bgi_paper_citations$Authors
+first_authors <- sapply(strsplit(first_authors, ";"), "[", 1)
+bgi_paper_citations$Authors <- first_authors
+# Display
+stargazer(bgi_paper_citations, type = "html", summary = FALSE, rownames = FALSE)
