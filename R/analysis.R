@@ -281,3 +281,60 @@ not_bgi_paper_citations$Authors <- first_authors
 stargazer(not_bgi_paper_citations, type = "html", summary = FALSE, rownames = FALSE)
 
 write.table(not_bgi_paper_citations, file = "not_bgi_paper_citations.csv", sep = ",", row.names = FALSE)
+
+####
+
+# Get all papers from China using reprint author who is also
+# the corresponding author
+
+# Read in data
+giga <- read.csv("data/wos/savedrecs_gigascience_289all.csv", sep=",", stringsAsFactors=FALSE)
+# Remove Correction articles
+giga <- giga[!grepl("Correction", giga$DT),]
+
+# Get Chinese papers using "China" as search term in RP column
+giga_chinese_idx <- grep("China", giga$RP, ignore.case = TRUE)
+# Select these rows from giga data
+giga_chinese_papers <- subset(giga[giga_chinese_idx,],)
+
+# Get number of chinese papers per year
+num_chinese_pub_per_year <- giga_chinese_papers$PY
+num_chinese_pub_per_year <- table(num_chinese_pub_per_year)
+# Convert to data frame
+num_chinese_pub_per_year <- as.data.frame(num_chinese_pub_per_year)
+num_chinese_pub_per_year <- num_chinese_pub_per_year[,2]
+
+# Get other papers in gigascience journal
+giga_not_chinese_idx <- grep("China", giga$RP, ignore.case = TRUE, invert = TRUE)
+# Select these not China rows from giga data
+giga_not_chinese_papers <- subset(giga[giga_not_chinese_idx, ], )
+# Get number of not China papers per year
+num_not_chinese_pub_per_year <- giga_not_chinese_papers$PY
+num_not_chinese_pub_per_year <- table(num_not_chinese_pub_per_year)
+# Convert to data frame
+num_not_chinese_pub_per_year <- as.data.frame(num_not_chinese_pub_per_year)
+num_not_chinese_pub_per_year <- num_not_chinese_pub_per_year[,2]
+
+# Get total number of GigaScience papers per year
+num_pub_per_year <- giga$PY
+num_pub_per_year <- table(num_pub_per_year)
+# Convert to data frame
+num_pub_per_year <- as.data.frame(num_pub_per_year)
+years <- num_pub_per_year[,1]
+num_pub_per_year <- num_pub_per_year[,2]
+
+# Visualise results
+data <- data.frame(years, num_chinese_pub_per_year, num_not_chinese_pub_per_year)
+p <- plot_ly(data,
+x = ~years,
+y = ~num_chinese_pub_per_year,
+type = 'bar',
+text = num_chinese_pub_per_year, textposition = 'auto',
+name = 'China papers') %>%
+add_trace(y = ~num_not_chinese_pub_per_year,
+text = num_pub_per_year, textposition = 'auto',
+name = 'Non-China papers') %>%
+layout(title = "Number of papers published in GigaScience with a China-based corresponding author",
+xaxis = list(title = "Year"),
+yaxis = list(title = 'No. papers'),
+barmode = 'stack')
