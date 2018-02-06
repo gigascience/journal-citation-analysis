@@ -3,3 +3,7 @@
 *Rst.pdf
 
 .DS_Store
+
+# R
+.RData
+.Rhistory
