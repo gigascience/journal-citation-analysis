@@ -39,8 +39,6 @@ num_pub_per_year <- table(num_pub_per_year)
 num_pub_per_year <- as.data.frame(num_pub_per_year)
 years <- num_pub_per_year[,1]
 num_pub_per_year <- num_pub_per_year[,2]
-# Update column names
-#colnames(num_pub_per_year) <- c("Year", "No. publications")
 
 # Get all BGI papers from GigaScience using "BGI" in author addresses
 giga_bgi_idx <- grep("BGI", giga$C1, ignore.case = TRUE)
@@ -52,8 +50,6 @@ num_BGI_pub_per_year <- table(num_BGI_pub_per_year)
 # Convert to data frame
 num_BGI_pub_per_year <- as.data.frame(num_BGI_pub_per_year)
 num_BGI_pub_per_year <- num_BGI_pub_per_year[,2]
-# Update column names
-#colnames(num_BGI_pub_per_year) <- c("Year", "No. publications")
 
 # Get other papers in gigascience journal
 giga_not_bgi_idx <- grep("BGI", giga$C1, ignore.case = TRUE, invert = TRUE)
@@ -245,3 +241,43 @@ first_authors <- sapply(strsplit(first_authors, ";"), "[", 1)
 bgi_paper_citations$Authors <- first_authors
 # Display
 stargazer(bgi_paper_citations, type = "html", summary = FALSE, rownames = FALSE)
+
+write.table(bgi_paper_citations, file = "bgi_paper_citations.csv", sep = ",", row.names = FALSE)
+
+
+####
+
+# Citation statistics for non-BGI papers published in GigaScience
+
+# Get DOIs for non-BGI papers
+giga <- read.csv("data/wos/savedrecs_gigascience_289all.csv", sep=",", stringsAsFactors=FALSE)
+# Remove Correction articles
+giga <- giga[!grepl("Correction", giga$DT),]
+# Get all non-BGI papers from GigaScience
+giga_not_bgi_idx <- grep("BGI", giga$C1, ignore.case = TRUE, invert = TRUE)
+# Select these non-BGI rows from giga data
+giga_not_bgi_papers <- subset(giga[giga_not_bgi_idx,],)
+
+not_bgi_dois <- giga_not_bgi_papers$DI
+length(not_bgi_dois)
+# Remove values which are empty strings
+not_bgi_dois <- not_bgi_dois[-which(not_bgi_dois == "")]
+length(not_bgi_dois)
+
+# Read in citation data
+gigac <- read.table("data/wos/savedrecs_gigascience_289all_citation_report.txt", sep=",", skip=3, stringsAsFactors=FALSE)
+# Tidy up column names
+colnames(gigac) <- gigac[1, ]
+gigac <- gigac[-c(1),]
+
+# Get BGI paper citations using bgi_dois
+not_bgi_paper_citations <- gigac[gigac$DOI %in% not_bgi_dois,]
+not_bgi_paper_citations <- subset(not_bgi_paper_citations, select=c("Title", "Authors", "Publication Year", "Total Citations", "Average per Year"))
+# Shorten authors to first author
+first_authors <- not_bgi_paper_citations$Authors
+first_authors <- sapply(strsplit(first_authors, ";"), "[", 1)
+not_bgi_paper_citations$Authors <- first_authors
+# Display
+stargazer(not_bgi_paper_citations, type = "html", summary = FALSE, rownames = FALSE)
+
+write.table(not_bgi_paper_citations, file = "not_bgi_paper_citations.csv", sep = ",", row.names = FALSE)
